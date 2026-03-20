@@ -1149,7 +1149,54 @@
             box-shadow: 0 4px 14px rgba(224,82,82,.35);
         }
 
-        /* ── FILTER BAR ────────────────────────────── */
+        /* ── RENFORCEMENT HINT BOX ─────────────────── */
+        .renfo-hint {
+            display: none;
+            margin-top: 8px;
+            background: var(--amber-lt);
+            border: 1px solid #f0c060;
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+        .renfo-hint.show { display: block; }
+        .renfo-hint-title {
+            font-size: .78rem; font-weight: 800;
+            color: #7a5200; text-transform: uppercase;
+            letter-spacing: .4px; margin-bottom: 8px;
+        }
+        .renfo-hint-links {
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .renfo-hint-link {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 12px;
+            background: #fff8e6;
+            border: 1px solid #f0c060;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #7a5200;
+            font-size: .82rem; font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+            transition: background .15s;
+        }
+        .renfo-hint-link:hover {
+            background: #fde08a;
+            color: #5a3800;
+        }
+        .renfo-hint-icon {
+            font-size: 1.1rem; flex-shrink: 0;
+        }
+        [data-theme="dark"] .renfo-hint {
+            background: #2a1f00;
+            border-color: #5a4000;
+        }
+        [data-theme="dark"] .renfo-hint-title { color: #fde08a; }
+        [data-theme="dark"] .renfo-hint-link {
+            background: #1f1700;
+            border-color: #5a4000;
+            color: #fde08a;
+        }
+        [data-theme="dark"] .renfo-hint-link:hover { background: #3a2a00; }
         .filter-bar {
             padding: 14px 20px;
             border-bottom: 1px solid var(--border);
@@ -1427,6 +1474,20 @@
                     <option value="Vélo Home Trainer">🚴 Vélo Home Trainer</option>
                     <option value="Cardio">❤️ Cardio</option>
                 </select>
+                <!-- Encart renforcement -->
+                <div class="renfo-hint" id="renfoHint">
+                    <div class="renfo-hint-title">💡 Pas sûr de quoi faire ?</div>
+                    <div class="renfo-hint-links">
+                        <a class="renfo-hint-link" href="https://www.seb-run-nature.com/2026/03/5-exercices-bas-du-corps-pour-dominer-en-trail.html" target="_blank" rel="noopener">
+                            <span class="renfo-hint-icon">🦵</span>
+                            <span>5 exercices bas du corps</span>
+                        </a>
+                        <a class="renfo-hint-link" href="https://www.seb-run-nature.com/2026/03/5-exercices-haut-du-corps-pour-progresser-en-trail.html" target="_blank" rel="noopener">
+                            <span class="renfo-hint-icon">💪</span>
+                            <span>5 exercices haut du corps</span>
+                        </a>
+                    </div>
+                </div>
             </div>
             <div class="form-group" id="kmGroup">
                 <label>Distance (km)</label>
@@ -1765,6 +1826,20 @@
                             <option value="Vélo Home Trainer">🚴 Vélo Home Trainer</option>
                             <option value="Cardio">❤️ Cardio</option>
                         </select>
+                        <!-- Encart renforcement modal -->
+                        <div class="renfo-hint" id="m-renfoHint">
+                            <div class="renfo-hint-title">💡 Pas sûr de quoi faire ?</div>
+                            <div class="renfo-hint-links">
+                                <a class="renfo-hint-link" href="https://www.seb-run-nature.com/2026/03/5-exercices-bas-du-corps-pour-dominer-en-trail.html" target="_blank" rel="noopener">
+                                    <span class="renfo-hint-icon">🦵</span>
+                                    <span>5 exercices bas du corps</span>
+                                </a>
+                                <a class="renfo-hint-link" href="https://www.seb-run-nature.com/2026/03/5-exercices-haut-du-corps-pour-progresser-en-trail.html" target="_blank" rel="noopener">
+                                    <span class="renfo-hint-icon">💪</span>
+                                    <span>5 exercices haut du corps</span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group" id="m-kmGroup">
                         <label>Distance (km)</label>
@@ -1918,22 +1993,24 @@ function updateModalSpeed() {
 function toggleFields() {
     const type = document.getElementById('type').value;
     const isCourse  = type === 'Course';
-    const isMinutes = ['Renforcement','Vélo Home Trainer','Cardio'].includes(type);
+    const isRenfo   = type === 'Renforcement';
     document.getElementById('kmGroup').classList.toggle('hidden', !isCourse);
     document.getElementById('dplusGroup').classList.toggle('hidden', !isCourse);
-    // Duration visible for Course AND other types
     document.getElementById('minutesGroup').classList.remove('hidden');
     document.getElementById('speedPreviewGroup').classList.toggle('hidden', !isCourse);
+    document.getElementById('renfoHint').classList.toggle('show', isRenfo);
     updateSpeedPreview();
 }
 
 function toggleModalFields() {
     const type = document.getElementById('m-type').value;
     const isCourse = type === 'Course';
+    const isRenfo  = type === 'Renforcement';
     document.getElementById('m-kmGroup').classList.toggle('hidden', !isCourse);
     document.getElementById('m-dplusGroup').classList.toggle('hidden', !isCourse);
     document.getElementById('m-minutesGroup').classList.remove('hidden');
     document.getElementById('m-speedPreviewGroup').classList.toggle('hidden', !isCourse);
+    document.getElementById('m-renfoHint').classList.toggle('show', isRenfo);
     updateModalSpeed();
 }
 
