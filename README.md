@@ -8,12 +8,13 @@
 
 ## ⬇️ Téléchargement
 
-👉 **[Télécharger le fichier HTML](https://github.com/SebRunNature/suivi-preparation-trail/raw/main/Suivi_Preparation_Trail_v9.html)**
+👉 **[Ouvrir le fichier HTML](https://github.com/SebRunNature/suivi-preparation-trail/raw/main/Suivi_Preparation_Trail_v9.html)**
 
 
-> Ouvre le fichier directement dans ton navigateur (Chrome, Firefox, Edge, Safari). Aucune installation, aucun serveur, aucun compte requis.
+> Ouvrez le fichier directement dans votre navigateur (Chrome, Firefox, Edge, Safari) — aucune installation ni compte requis.
+Si vous avez copié le code brut : Collez-le dans un éditeur de texte (Notepad++, Bloc-notes…). Enregistrez avec l’extension .html.
+Double-cliquez sur le fichier pour l’ouvrir. Consultez les instructions détaillées ci-dessous ou sur mon blog pour la suite.
 
----
 
 ## 🎯 Pourquoi cet outil ?
 
@@ -87,7 +88,7 @@ Tes données ne quittent jamais ton ordinateur. Pas de cloud, pas de compte, pas
 
 ## 🚀 Utilisation
 
-1. **Télécharge** le fichier `Suivi_Preparation_Trail_v3.html`
+1. **Télécharge** le fichier `Suivi_Preparation_Trail.html`
 2. **Ouvre-le** dans ton navigateur (double-clic ou glisser-déposer)
 3. **C'est tout.** Commence à enregistrer tes séances
 
