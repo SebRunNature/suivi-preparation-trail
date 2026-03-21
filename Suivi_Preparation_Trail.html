@@ -644,6 +644,7 @@
             letter-spacing: .3px; white-space: nowrap;
         }
         .badge-Course       { background: var(--green-lt);  color: var(--green-dk); }
+        .badge-Trail        { background: #e8f0ff;           color: #2a4ab0; }
         .badge-Renforcement { background: var(--amber-lt);  color: #9a6700; }
         .badge-Vélo         { background: var(--sky-lt);    color: #1a4f9e; }
         .badge-VéloHomeTrainer { background: var(--sky-lt); color: #1a4f9e; }
@@ -1470,6 +1471,7 @@
                 <label>Type de séance</label>
                 <select id="type" onchange="toggleFields(); clearAllErrors();">
                     <option value="Course">🏃 Course</option>
+                    <option value="Trail">🏔️ Trail</option>
                     <option value="Renforcement">💪 Renforcement</option>
                     <option value="Vélo Home Trainer">🚴 Vélo Home Trainer</option>
                     <option value="Cardio">❤️ Cardio</option>
@@ -1571,6 +1573,7 @@
                     <select class="filter-select" id="fType" onchange="applyFilters()">
                         <option value="">Tous</option>
                         <option value="Course">🏃 Course</option>
+                        <option value="Trail">🏔️ Trail</option>
                         <option value="Vélo Home Trainer">🚴 Vélo</option>
                         <option value="Renforcement">💪 Renfo</option>
                         <option value="Cardio">❤️ Cardio</option>
@@ -1822,6 +1825,7 @@
                         <label>Type de séance</label>
                         <select id="m-type" onchange="toggleModalFields(); clearAllModalErrors();">
                             <option value="Course">🏃 Course</option>
+                            <option value="Trail">🏔️ Trail</option>
                             <option value="Renforcement">💪 Renforcement</option>
                             <option value="Vélo Home Trainer">🚴 Vélo Home Trainer</option>
                             <option value="Cardio">❤️ Cardio</option>
@@ -1992,7 +1996,7 @@ function updateModalSpeed() {
 ───────────────────────────────────────── */
 function toggleFields() {
     const type = document.getElementById('type').value;
-    const isCourse  = type === 'Course';
+    const isCourse  = ['Course','Trail'].includes(type);
     const isRenfo   = type === 'Renforcement';
     document.getElementById('kmGroup').classList.toggle('hidden', !isCourse);
     document.getElementById('dplusGroup').classList.toggle('hidden', !isCourse);
@@ -2004,7 +2008,7 @@ function toggleFields() {
 
 function toggleModalFields() {
     const type = document.getElementById('m-type').value;
-    const isCourse = type === 'Course';
+    const isCourse = ['Course','Trail'].includes(type);
     const isRenfo  = type === 'Renforcement';
     document.getElementById('m-kmGroup').classList.toggle('hidden', !isCourse);
     document.getElementById('m-dplusGroup').classList.toggle('hidden', !isCourse);
@@ -2061,7 +2065,7 @@ function validateForm(prefix) {
     else markValid(p + 'date');
 
     // Distance (Course only)
-    if (type === 'Course') {
+    if (['Course','Trail'].includes(type)) {
         const km = Number(document.getElementById(p + 'km').value) || 0;
         if (km <= 0) { showError(p + 'km'); valid = false; }
         else markValid(p + 'km');
@@ -2095,9 +2099,9 @@ function addEntry() {
         return;
     }
     const type = document.getElementById('type').value;
-    const km   = type === 'Course' ? Number(document.getElementById('km').value) || 0 : 0;
+    const km   = ['Course','Trail'].includes(type) ? Number(document.getElementById('km').value) || 0 : 0;
     const min  = Number(document.getElementById('minutes').value) || 0;
-    const s    = (type === 'Course') ? calcSpeed(km, min) : null;
+    const s    = ['Course','Trail'].includes(type) ? calcSpeed(km, min) : null;
 
     const entry = {
         id:        Date.now(),
@@ -2105,7 +2109,7 @@ function addEntry() {
         moment:    document.getElementById('moment').value,
         type,
         km,
-        dplus:     type === 'Course' ? Number(document.getElementById('dplus').value) || 0 : 0,
+        dplus:     ['Course','Trail'].includes(type) ? Number(document.getElementById('dplus').value) || 0 : 0,
         minutes:   min,
         speedKmh:  s ? parseFloat(s.speedKmh) : 0,
         pace:      s ? s.pace : '',
@@ -2173,9 +2177,9 @@ function addEntryFromModal() {
         return;
     }
     const type = document.getElementById('m-type').value;
-    const km   = type === 'Course' ? Number(document.getElementById('m-km').value) || 0 : 0;
+    const km   = ['Course','Trail'].includes(type) ? Number(document.getElementById('m-km').value) || 0 : 0;
     const min  = Number(document.getElementById('m-minutes').value) || 0;
-    const s    = (type === 'Course') ? calcSpeed(km, min) : null;
+    const s    = ['Course','Trail'].includes(type) ? calcSpeed(km, min) : null;
 
     const entry = {
         id:        Date.now(),
@@ -2183,7 +2187,7 @@ function addEntryFromModal() {
         moment:    document.getElementById('m-moment').value,
         type,
         km,
-        dplus:     type === 'Course' ? Number(document.getElementById('m-dplus').value) || 0 : 0,
+        dplus:     ['Course','Trail'].includes(type) ? Number(document.getElementById('m-dplus').value) || 0 : 0,
         minutes:   min,
         speedKmh:  s ? parseFloat(s.speedKmh) : 0,
         pace:      s ? s.pace : '',
@@ -2499,7 +2503,7 @@ function renderTable(entries) {
     const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
 
     entries.forEach((item, i) => {
-        const isCourse = item.type === 'Course';
+        const isCourse = ['Course','Trail'].includes(item.type);
         const mins = Number(item.minutes) || 0;
         const durH = Math.floor(mins / 60);
         const durM = mins % 60;
@@ -2569,7 +2573,7 @@ function renderStats(entries) {
     let rpeTotal=0, rpeCount=0, bpmTotal=0, bpmCount=0;
 
     entries.forEach(e => {
-        if (e.type==='Course') {
+        if (['Course','Trail'].includes(e.type)) {
             courseKm   += Number(e.km)||0;
             courseDplus+= Number(e.dplus)||0;
             courseMin  += Number(e.minutes)||0;
@@ -2719,8 +2723,8 @@ function exportCSV() {
             const pace  = e.pace || (e.km && e.minutes ? calcSpeed(e.km, e.minutes)?.pace || '' : '');
             return [
                 dateFmt, e.moment, e.type,
-                e.type === 'Course' ? Number(e.km).toFixed(2) : '',
-                e.type === 'Course' ? (e.dplus || 0) : '',
+                ['Course','Trail'].includes(e.type) ? Number(e.km).toFixed(2) : '',
+                ['Course','Trail'].includes(e.type) ? (e.dplus || 0) : '',
                 e.minutes || '',
                 speed, pace,
                 e.liquide || '', e.nutrition || '',
@@ -2752,7 +2756,7 @@ function exportPDF() {
     // Compute totals
     let totalKm = 0, totalDp = 0, totalMin = 0;
     entries.forEach(e => {
-        if (e.type === 'Course') { totalKm += Number(e.km)||0; totalDp += Number(e.dplus)||0; }
+        if (['Course','Trail'].includes(e.type)) { totalKm += Number(e.km)||0; totalDp += Number(e.dplus)||0; }
         totalMin += Number(e.minutes)||0;
     });
     const totalH = (totalMin/60).toFixed(1);
@@ -2761,7 +2765,7 @@ function exportPDF() {
     const rowsHtml = sorted.map(e => {
         const [y,m,d] = e.date.split('-');
         const dateFmt = `${d} ${months[parseInt(m)-1]} ${y}`;
-        const isCourse = e.type === 'Course';
+        const isCourse = ['Course','Trail'].includes(e.type);
         const mins = Number(e.minutes)||0;
         const h = Math.floor(mins/60), min = mins%60;
         const dur = mins > 0 ? (h > 0 ? `${h}h${String(min).padStart(2,'0')}` : `${min} min`) : '—';
@@ -3176,9 +3180,11 @@ function compressImage(file, profile) {
                 const h = Math.round(img.height * scale);
                 const c = document.createElement('canvas');
                 c.width = w; c.height = h;
-                c.getContext('2d').drawImage(img, 0, 0, w, h);
+                const ctx2 = c.getContext('2d');
+                ctx2.filter = 'grayscale(100%)';
+                ctx2.drawImage(img, 0, 0, w, h);
+                ctx2.filter = 'none';
                 const src = c.toDataURL('image/jpeg', profile.quality);
-                // Estimate size in KB
                 const kb = Math.round((src.length * 3/4) / 1024);
                 resolve({ src, kb });
             };
@@ -3295,7 +3301,7 @@ async function pickRandomPhoto() {
         return;
     }
     document.getElementById('noBankWarning').style.display = 'none';
-    const photo = bank[Math.floor(Math.random() * bank.length)];
+    const photo = filterPhotosByType(bank, _shareEntry ? _shareEntry.type : '');
     const img = new Image();
     img.onload = () => { _shareBgImage = img; drawShareCanvas(_shareEntry, img); };
     img.src = photo.src;
@@ -3304,10 +3310,29 @@ async function pickRandomPhoto() {
 async function pickRandomVideoPhoto() {
     const bank = await idbGetAll();
     if (!bank.length) { showToast('⚠️ Aucune photo dans la banque.'); return; }
-    const photo = bank[Math.floor(Math.random() * bank.length)];
+    const photo = filterPhotosByType(bank, _videoEntry ? _videoEntry.type : '');
     const img = new Image();
     img.onload = () => { _videoBgImg = img; drawVideoFrame(_videoEntry, 0, 1); };
     img.src = photo.src;
+}
+
+/* ── Filtrage photo par type de séance ────── */
+function filterPhotosByType(bank, type) {
+    if (!type) return bank[Math.floor(Math.random() * bank.length)];
+    const keyword = typeToKeyword(type);
+    const filtered = bank.filter(p => p.name && p.name.toLowerCase().includes(keyword));
+    const pool = filtered.length ? filtered : bank; // fallback: all photos
+    return pool[Math.floor(Math.random() * pool.length)];
+}
+function typeToKeyword(type) {
+    const map = {
+        'Course':            'course',
+        'Trail':             'trail',
+        'Cardio':            'cardio',
+        'Renforcement':      'renfo',
+        'Vélo Home Trainer': 'velo'
+    };
+    return map[type] || '';
 }
 
 
@@ -3324,7 +3349,6 @@ function openShareModal(id) {
     _shareBgImage = null;
     document.getElementById('shareModalOverlay').classList.add('open');
     renderShareStats(entry);
-    // Try random bg from bank (async)
     idbGetAll().then(bank => {
         if (bank.length) {
             document.getElementById('noBankWarning').style.display = 'none';
@@ -3366,7 +3390,7 @@ function clearBg() {
 }
 
 function renderShareStats(entry) {
-    const isCourse = entry.type === 'Course';
+    const isCourse = ['Course','Trail'].includes(entry.type);
     const mins = Number(entry.minutes) || 0;
     const h = Math.floor(mins / 60);
     const m = mins % 60;
@@ -3402,7 +3426,7 @@ function drawShareCanvas(entry, bgImg) {
     const W = 1080, H = 1080;
     canvas.width = W; canvas.height = H;
 
-    const isCourse = entry.type === 'Course';
+    const isCourse = ['Course','Trail'].includes(entry.type);
     const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
     const [y, mo, d] = entry.date.split('-');
     const dateFmt = `${d} ${months[parseInt(mo)-1]} ${y}`;
@@ -3522,12 +3546,31 @@ function drawShareCanvas(entry, bgImg) {
     ctx.textBaseline = 'middle';
     ctx.fillText('Seb Run Nature', pillX + 54, pillY + 26);
 
-    // Date top right
-    ctx.fillStyle = 'rgba(255,255,255,0.80)';
-    ctx.font = '600 26px Nunito, Arial, sans-serif';
+    // Type de séance (remplace la date) — top right
+    const typeLabel = { 'Course':'🏃 COURSE', 'Trail':'🏔️ TRAIL', 'Cardio':'❤️ CARDIO', 'Renforcement':'💪 RENFO', 'Vélo Home Trainer':'🚴 VÉLO' };
+    const typeTxt = typeLabel[entry.type] || entry.type.toUpperCase();
+    const typeColors = { 'Course':'#a8f0d0', 'Trail':'#a8c0ff', 'Cardio':'#f5c07e', 'Renforcement':'#fde08a', 'Vélo Home Trainer':'#7eb8f5' };
+    const typePillColor = typeColors[entry.type] || '#a8f0d0';
+
+    // Pill background
+    ctx.save();
     ctx.textAlign = 'right';
-    ctx.textBaseline = 'top';
-    ctx.fillText(dateFmt, W - 52, 66);
+    ctx.font = 'bold 24px Nunito, Arial, sans-serif';
+    const tW = ctx.measureText(typeTxt).width + 40;
+    const tX = W - 52 - tW, tY = 52, tH = 48;
+    ctx.beginPath();
+    roundRect(ctx, tX, tY, tW, tH, 24);
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.fill();
+    ctx.strokeStyle = typePillColor + '99';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle = typePillColor;
+    ctx.font = 'bold 24px Nunito, Arial, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(typeTxt, W - 52 - 16, tY + tH / 2);
     ctx.textAlign = 'left';
 
     // ── 3. ACTIVITY TYPE (supprimé) ──────────────
@@ -3754,7 +3797,7 @@ function drawVideoFrame(entry, progress, alpha) {
     const W = 1080, H = 1080;
     canvas.width = W; canvas.height = H;
 
-    const isCourse = entry.type === 'Course';
+    const isCourse = ['Course','Trail'].includes(entry.type);
     const mins  = Number(entry.minutes) || 0;
     const km    = Number(entry.km)      || 0;
     const dplus = Math.round(Number(entry.dplus) || 0);
@@ -3837,13 +3880,27 @@ function drawVideoFrame(entry, progress, alpha) {
     ctx.fillText('Seb Run Nature', pillX+54, pillY+26);
     ctx.restore();
 
-    // ── 2. DATE (top right) ──────────────────
+    // ── 2. TYPE DE SÉANCE (remplace la date) ─────
     ctx.save();
     ctx.globalAlpha = alpha * brandAlpha;
-    ctx.fillStyle = 'rgba(255,255,255,0.80)';
-    ctx.font = '600 26px Nunito, Arial, sans-serif';
-    ctx.textAlign = 'right'; ctx.textBaseline = 'top';
-    ctx.fillText(dateFmt, W-52, 66);
+    const typeLabel2 = { 'Course':'🏃 COURSE', 'Trail':'🏔️ TRAIL', 'Cardio':'❤️ CARDIO', 'Renforcement':'💪 RENFO', 'Vélo Home Trainer':'🚴 VÉLO' };
+    const typeTxt2 = typeLabel2[entry.type] || entry.type.toUpperCase();
+    const typeColors2 = { 'Course':'#a8f0d0', 'Trail':'#a8c0ff', 'Cardio':'#f5c07e', 'Renforcement':'#fde08a', 'Vélo Home Trainer':'#7eb8f5' };
+    const typePillColor2 = typeColors2[entry.type] || '#a8f0d0';
+    ctx.font = 'bold 24px Nunito, Arial, sans-serif';
+    ctx.textAlign = 'right';
+    const tW2 = ctx.measureText(typeTxt2).width + 40;
+    const tX2 = W - 52 - tW2, tY2 = 52, tH2 = 48;
+    ctx.beginPath();
+    roundRect(ctx, tX2, tY2, tW2, tH2, 24);
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.fill();
+    ctx.strokeStyle = typePillColor2 + '99';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = typePillColor2;
+    ctx.textBaseline = 'middle';
+    ctx.fillText(typeTxt2, W - 52 - 16, tY2 + tH2 / 2);
     ctx.textAlign = 'left';
     ctx.restore();
 
@@ -4469,7 +4526,7 @@ function renderReadiness() {
         let km = 0, dp = 0, mins = 0;
         entries.filter(e => { const d=new Date(e.date); return d>=wStart && d<=wEnd; })
                .forEach(e => {
-                   if (e.type==='Course') { km+=Number(e.km)||0; dp+=Number(e.dplus)||0; }
+                   if (['Course','Trail'].includes(e.type)) { km+=Number(e.km)||0; dp+=Number(e.dplus)||0; }
                    mins += Number(e.minutes)||0;
                });
         weeks.push({ km, dp, h: mins/60 });
