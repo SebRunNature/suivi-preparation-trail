@@ -1338,6 +1338,65 @@
         [data-theme="dark"] .chart-card { background: var(--card); }
         [data-theme="dark"] .chart-tabs { background: #0f1a14; }
         [data-theme="dark"] .chart-tab.active { background: var(--card); }
+		
+		/* ── POIDS & WATTS ─────────────────────────────── */
+.weight-box {
+    background: rgba(255,255,255,.12);
+    border: 1.5px solid rgba(168,240,208,.35);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+}
+.weight-box label {
+    font-size: .78rem;
+    color: rgba(168,240,208,.85);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+}
+.weight-box input, .weight-box select {
+    background: rgba(255,255,255,.15);
+    border: 1.5px solid rgba(255,255,255,.25);
+    color: #fff;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: .95rem;
+}
+[data-theme="dark"] .weight-box {
+    background: rgba(0,0,0,.25);
+    border-color: rgba(168,240,208,.25);
+}
+[data-theme="dark"] .weight-box input,
+[data-theme="dark"] .weight-box select {
+    background: #1a2620;
+    border-color: #2a4038;
+    color: #e8f5f0;
+}
+
+/* Colonne Watts dans le tableau */
+th.watts-col, td.watts-col {
+    width: 110px;
+    text-align: center;
+    white-space: nowrap;
+}
+.watts-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #00ab87;
+}
+.watts-sub {
+    font-size: .72rem;
+    color: rgba(0,171,135,.75);
+    display: block;
+    margin-top: 2px;
+}
+#wattsGroup {
+    margin-top: 8px;
+}
     </style>
 </head>
 <body>
@@ -1368,6 +1427,25 @@
             <span style="font-size:.4em;opacity:.6;display:block;font-family:'Nunito',sans-serif;font-weight:600;letter-spacing:0;margin-top:4px;">✏️ Cliquer pour modifier le titre</span>
         </h1>
         <p class="hero-sub">"Le succès est la somme de petits efforts répétés jour après jour."</p>
+		
+	<!-- BOÎTE POIDS / TAILLE / GENRE -->
+        <div class="weight-box" id="weightBox">
+            <div class="form-group">
+                <label>Genre</label>
+                <select id="userGender" onchange="saveUserInfo()">
+                    <option value="H">Homme</option>
+                    <option value="F">Femme</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Taille (cm)</label>
+                <input type="number" id="userHeight" placeholder="180" min="100" max="250" onchange="saveUserInfo()">
+            </div>
+            <div class="form-group">
+                <label>Poids (kg)</label>
+                <input type="number" id="userWeight" placeholder="75" min="30" max="200" step="0.1" onchange="saveUserInfo()">
+            </div>
+        </div>
 
         <!-- TRAIL OBJECTIF -->
         <div class="trail-goal-bar" id="trailGoalBar" onclick="openGoalModal()">
@@ -1527,14 +1605,18 @@
                 <input type="number" id="bpm" min="40" max="220" placeholder="Ex: 145" oninput="clearError('bpm')">
                 <span class="field-error" id="err-bpm">⚠️ BPM doit être entre 40 et 220</span>
             </div>
-            <div class="form-group">
-                <label>Notes</label>
-                <input type="text" id="notes" placeholder="Ressenti, terrain…">
-            </div>
-            <button class="btn-add" id="btnAddEntry" onclick="addEntry()">
-                <span>⚡</span> Enregistrer la séance
-            </button>
-        </div>
+				<div class="form-group">
+				<label>Notes</label>
+				<input type="text" id="notes" placeholder="Ressenti, terrain…">
+			</div>
+			<div class="form-group" id="wattsGroup" style="display:none; grid-column: span 2;">
+				<label>⚡ Watts Home Trainer</label>
+				<input type="number" id="watts" min="0" step="1" placeholder="Ex: 185">
+			</div>
+				<button class="btn-add" id="btnAddEntry" onclick="addEntry()" style="grid-column: span 2; justify-self: start;">
+					<span>⚡</span> Enregistrer la séance
+				</button>
+		</div>
         <div class="tip-box">
             💡 <span><strong>RPE</strong> (Rate of Perceived Exertion) : de <strong>1</strong> (très facile) à <strong>10</strong> (effort maximal). Indispensable pour doser ta charge d'entraînement et éviter le sur-entraînement.</span>
         </div>
@@ -1629,6 +1711,7 @@
                         <th>Notes</th>
                         <th>🖼</th>
                         <th>🎬</th>
+						<th class="watts-col">Watts</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -2004,6 +2087,8 @@ function toggleFields() {
     document.getElementById('speedPreviewGroup').classList.toggle('hidden', !isCourse);
     document.getElementById('renfoHint').classList.toggle('show', isRenfo);
     updateSpeedPreview();
+	toggleWattsField();           // ← AJOUT
+    updateSpeedPreview();
 }
 
 function toggleModalFields() {
@@ -2102,6 +2187,8 @@ function addEntry() {
     const km   = ['Course','Trail'].includes(type) ? Number(document.getElementById('km').value) || 0 : 0;
     const min  = Number(document.getElementById('minutes').value) || 0;
     const s    = ['Course','Trail'].includes(type) ? calcSpeed(km, min) : null;
+	const wattsValue = (type === 'Vélo Home Trainer') ? 
+        Number(document.getElementById('watts').value) || 0 : 0;
 
     const entry = {
         id:        Date.now(),
@@ -2117,6 +2204,7 @@ function addEntry() {
         nutrition: document.getElementById('nutrition').value.trim(),
         rpe:       Number(document.getElementById('rpe').value) || 5,
         bpm:       Number(document.getElementById('bpm').value) || 0,
+		watts:     wattsValue,
         notes:     document.getElementById('notes').value.trim(),
         source:    'manual'
     };
@@ -2558,6 +2646,7 @@ function renderTable(entries) {
                 </div>
             </td>
             <td style="font-size:.85rem;">${bpmTxt}</td>
+			<td class="watts-col">${getWattsDisplay(item)}</td>
             <td style="font-size:.83rem;color:var(--muted);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${item.notes||''}">${item.notes || '—'}</td>
             <td><button class="share-btn" onclick="openShareModal(${item.id})" title="Générer image partage">🏔️</button></td>
             <td><button class="video-btn" onclick="openVideoModal(${item.id})" title="Générer vidéo animée">🎬</button></td>
@@ -3023,6 +3112,8 @@ function loadData() {
     // Attach live preview listener for goal distance field
     const gDist = document.getElementById('g-dist');
     if (gDist) gDist.addEventListener('input', updateGoalPreview);
+	loadUserInfo();
+    toggleWattsField();   // pour le formulaire principal
 }
 
 /* ═══════════════════════════════════════════════
@@ -4755,6 +4846,102 @@ document.addEventListener('keydown', e => {
         closeGoalModal();
     }
 });
+/* ─────────────────────────────────────────
+   POIDS UTILISATEUR & CALCUL WATTS
+───────────────────────────────────────── */
+
+// Sauvegarde / chargement du poids
+function saveUserInfo() {
+    const gender = document.getElementById('userGender').value;
+    const height = parseFloat(document.getElementById('userHeight').value) || 0;
+    const weight = parseFloat(document.getElementById('userWeight').value) || 0;
+    
+    localStorage.setItem('userGender', gender);
+    localStorage.setItem('userHeight', height);
+    localStorage.setItem('userWeight', weight);
+}
+
+function loadUserInfo() {
+    document.getElementById('userGender').value = localStorage.getItem('userGender') || 'H';
+    document.getElementById('userHeight').value = localStorage.getItem('userHeight') || '';
+    document.getElementById('userWeight').value = localStorage.getItem('userWeight') || '';
+}
+
+/* ─────────────────────────────────────────
+   POIDS UTILISATEUR & CALCUL WATTS
+───────────────────────────────────────── */
+
+// Sauvegarde / chargement des infos utilisateur
+function saveUserInfo() {
+    const gender = document.getElementById('userGender').value;
+    const height = parseFloat(document.getElementById('userHeight').value) || 0;
+    const weight = parseFloat(document.getElementById('userWeight').value) || 0;
+    
+    localStorage.setItem('userGender', gender);
+    localStorage.setItem('userHeight', height);
+    localStorage.setItem('userWeight', weight);
+}
+
+function loadUserInfo() {
+    document.getElementById('userGender').value = localStorage.getItem('userGender') || 'H';
+    document.getElementById('userHeight').value = localStorage.getItem('userHeight') || '';
+    document.getElementById('userWeight').value = localStorage.getItem('userWeight') || '';
+}
+
+// Calcul watts pour Course et Trail
+function calculateWatts(km, minutes, dplus, weightKg) {
+    if (!weightKg || weightKg <= 0) return { watts: 0, wkg: 0 };
+    
+    const hours = minutes / 60;
+    if (hours <= 0) return { watts: 0, wkg: 0 };
+    
+    const speedKmh = km / hours;
+    const speedMs  = speedKmh * 1000 / 3600;
+    
+    // Puissance horizontale + dénivelé
+    let power = speedMs * weightKg * 1.04;   // ECOR moyen course
+    
+    if (dplus > 0) {
+        const verticalSpeed = (dplus / 1000) / hours;           // km/h vertical
+        power += verticalSpeed * 9.81 * weightKg * 0.95;        // rendement ~95%
+    }
+    
+    const watts = Math.round(power);
+    const wkg   = (watts / weightKg).toFixed(1);
+    
+    return { watts, wkg };
+}
+
+// Affichage des watts dans le tableau
+function getWattsDisplay(entry) {
+    const weight = parseFloat(localStorage.getItem('userWeight')) || 0;
+    
+    if (entry.type === 'Vélo Home Trainer') {
+        return entry.watts ? `<span class="watts-value">${entry.watts} W</span>` : '—';
+    }
+    
+    if (['Course', 'Trail'].includes(entry.type) && weight > 0) {
+        const calc = calculateWatts(entry.km || 0, entry.minutes || 0, entry.dplus || 0, weight);
+        if (calc.watts > 0) {
+            return `<span class="watts-value">${calc.watts} W</span><span class="watts-sub">(${calc.wkg} W/kg)</span>`;
+        }
+    }
+    return '—';
+}
+
+// Afficher/masquer le champ watts selon le type
+function toggleWattsField() {
+    const type = document.getElementById('type').value;
+    const wattsGroup = document.getElementById('wattsGroup');
+    wattsGroup.style.display = (type === 'Vélo Home Trainer') ? 'block' : 'none';
+}
+
+// Mise à jour du toggle dans le modal aussi
+function toggleModalWattsField() {
+    const type = document.getElementById('m-type').value;
+    // Pour l'instant on ne met pas de champ watts dans le modal (pour rester simple)
+    // Si tu veux l'ajouter plus tard, dis-le moi.
+}
 
 </script>
 <!-- ── PHOTO BANK MODAL ────────────────────────── -->
