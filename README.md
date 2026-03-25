@@ -8,13 +8,11 @@
 
 ## ⬇️ Téléchargement
 
-👉 **[Ouvrir le fichier HTML](https://github.com/SebRunNature/suivi-preparation-trail/raw/main/Suivi_Preparation_Trail_v10.html)**
+👉 **[Télécharger le fichier HTML](https://github.com/TON_USERNAME/suivi-preparation-trail/raw/main/Suivi_Preparation_Trail_v14.html)**
 
+> Ouvre le fichier directement dans ton navigateur (Chrome, Firefox, Edge, Safari). Aucune installation, aucun serveur, aucun compte requis.
 
-> Ouvrez le fichier directement dans votre navigateur (Chrome, Firefox, Edge, Safari) — aucune installation ni compte requis.
-Si vous avez copié le code brut : Collez-le dans un éditeur de texte (Notepad++, Bloc-notes…). Enregistrez avec l’extension .html.
-Double-cliquez sur le fichier pour l’ouvrir. Consultez les instructions détaillées ci-dessous ou sur mon blog pour la suite.
-
+---
 
 ## 🎯 Pourquoi cet outil ?
 
@@ -25,6 +23,12 @@ Tes données ne quittent jamais ton ordinateur. Pas de cloud, pas de compte, pas
 ---
 
 ## ✨ Fonctionnalités
+
+### 📋 Journal des séances
+- Types de séances : **Course**, **Trail**, **Renforcement**, **Vélo Home Trainer**
+- Calcul automatique de la vitesse et de l’allure
+- Distance, D+, durée, RPE (1–10), BPM moyen, nutrition, notes
+- **Watts** : calcul automatique pour Course et Trail (basé sur poids + vitesse + D+), saisie manuelle pour Home Trainer
 
 ### 📋 Journal des séances
 - Enregistre **Course, Vélo Home Trainer, Renforcement, Cardio**
@@ -88,7 +92,7 @@ Tes données ne quittent jamais ton ordinateur. Pas de cloud, pas de compte, pas
 
 ## 🚀 Utilisation
 
-1. **Télécharge** le fichier `Suivi_Preparation_Trail.html`
+1. **Télécharge** le fichier `Suivi_Preparation_Trail_v3.html`
 2. **Ouvre-le** dans ton navigateur (double-clic ou glisser-déposer)
 3. **C'est tout.** Commence à enregistrer tes séances
 
